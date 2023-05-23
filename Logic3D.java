@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Spin extends JPanel {
-    double angle = (Math.PI/180) * 0;
+    double angleX = (Math.PI/180) * 0;
+	double angleY = (Math.PI/180) * 0;
+	double angleZ = (Math.PI/180) * 0;
     int length = 200;
     int offset = 100;
 
@@ -17,24 +19,38 @@ public class Spin extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        System.out.println(angle);
-        angle += (Math.PI/180) * 1;
+        System.out.println(angleX + ", " + angleY + ", " + angleZ);
+        angleX += (Math.PI/180) * 1;
+		angleY += (Math.PI/180) * 1;
+		angleZ += (Math.PI/180) * 1;
 
-        double[][] rotate = {
-                {Math.cos(angle), -Math.sin(angle)},
-                {Math.sin(angle),  Math.cos(angle)}
+        double[][] rotateX = {
+				{1, 0, 0},
+                {0, Math.cos(angleX), Math.sin(angleX)},
+                {0, -Math.sin(angleX),  Math.cos(angleX)}
         };
+		double[][] rotateY = {
+			{Math.cos(angleY), 0, -Math.sin(angleY)},
+			{0, 1, 0},
+			{Math.sin(angleY), 0,  Math.cos(angleY)}
+		};
+		double[][] rotateZ = {
+			{Math.cos(angleZ), Math.sin(angleZ), 0},
+			{-Math.sin(angleZ),  Math.cos(angleZ), 0},
+			{0, 0, 1}
+		};
 
-        invokeSquare(g, rotate);
+        invokeSquare(g, rotateX, rotateY, rotateZ);
 
         try { Thread.sleep(10); } catch (InterruptedException e) {}
     }
 
-    private int[] drawSquare(Graphics g, int midx, int midy, int xa, int ya, int xb, int yb, double[][] rotate) {
-        int x1 = (int) Math.round(rotate[0][0] * (xa - midx) + rotate[0][1] * (ya - midy) + midx);
-        int y1 = (int) Math.round(rotate[1][0] * (xa - midx) + rotate[1][1] * (ya - midy) + midy);
-        int x2 = (int) Math.round(rotate[0][0] * (xb - midx) + rotate[0][1] * (yb - midy) + midx);
-        int y2 = (int) Math.round(rotate[1][0] * (xb - midx) + rotate[1][1] * (yb - midy) + midy);
+    private int[] drawSquare(Graphics g, int midx, int midy, int xa, int ya, int xb, int yb, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
+        // int x1 = (int) Math.round(rotate[0][0] * (xa - midx) + rotate[0][1] * (ya - midy) + midx);
+        // int y1 = (int) Math.round(rotate[1][0] * (xa - midx) + rotate[1][1] * (ya - midy) + midy);
+        // int x2 = (int) Math.round(rotate[0][0] * (xb - midx) + rotate[0][1] * (yb - midy) + midx);
+        // int y2 = (int) Math.round(rotate[1][0] * (xb - midx) + rotate[1][1] * (yb - midy) + midy);
+
 
 		g.setColor(Color.WHITE);
 		g.drawLine(x1+250, y1+250, x2+250, y2+250);
@@ -45,10 +61,6 @@ public class Spin extends JPanel {
 		return test;
     }
 
-	// private void drawFaces(Graphics g, int[] pos, int length) {
-	// 	g.fillRect((pos[0]-200)+250, (pos[1])+250, length, length);
-	// }
-
 	private void drawLines(Graphics g, int[][] pos) {
 		g.setColor(Color.WHITE);
 		g.drawLine(pos[0][0]+250, pos[0][1]+250, pos[1][0]+250, pos[1][1]+250);
@@ -58,21 +70,21 @@ public class Spin extends JPanel {
 
 	}
 
-    private void invokeSquare(Graphics g, double[][] rotate) {
+    private void invokeSquare(Graphics g, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
 		int difference = 30;
-        int[] a1 = drawSquare(g, 0, 0, -(length/2), -(length/2), (length/2), -(length/2), rotate);
-        int[] b1 = drawSquare(g, 0, 0, (length/2), -(length/2), (length/2), (length/2), rotate);
-        int[] c1 = drawSquare(g, 0, 0, (length/2), (length/2), -(length/2), (length/2), rotate);
-        int[] d1 = drawSquare(g, 0, 0, -(length/2), (length/2), -(length/2), -(length/2), rotate);
+        int[] a1 = drawSquare(g, 0, 0, -(length/2), -(length/2), (length/2), -(length/2), rotateX, rotateY, rotateZ);
+        int[] b1 = drawSquare(g, 0, 0, (length/2), -(length/2), (length/2), (length/2), rotateX, rotateY, rotateZ);
+        int[] c1 = drawSquare(g, 0, 0, (length/2), (length/2), -(length/2), (length/2), rotateX, rotateY, rotateZ);
+        int[] d1 = drawSquare(g, 0, 0, -(length/2), (length/2), -(length/2), -(length/2), rotateX, rotateY, rotateZ);
 
         int[] a2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, 
-			((length/2) - difference) + offset, -((length/2) - difference) + offset, rotate);
+			((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
         int[] b2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, 
-			((length/2) - difference) + offset, ((length/2) - difference) + offset, rotate);
+			((length/2) - difference) + offset, ((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
         int[] c2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, ((length/2) - difference) + offset, 
-			-((length/2) - difference) + offset, ((length/2) - difference) + offset, rotate);
+			-((length/2) - difference) + offset, ((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
         int[] d2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, ((length/2) - difference) + offset, 
-			-((length/2) - difference) + offset, -((length/2) - difference) + offset, rotate);
+			-((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
 
 		int[][] pointPos = {a1, a2, b1, b2, c1, c2, d1, d2};
 
