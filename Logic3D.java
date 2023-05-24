@@ -1,26 +1,98 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class Game extends JPanel {
+public class Spin extends JPanel {
     double angleX = (Math.PI/180) * 0;
 	double angleY = (Math.PI/180) * 0;
 	double angleZ = (Math.PI/180) * 0;
+    double size = 300;
     double length = 1;
+    int centerX = 250;
+    int centerY = 250;
     int offset = 100;
 
-    public Game() {
+    boolean xCheck = false;
+    boolean yCheck = false;
+    boolean zCheck = false;
+
+    public Spin() {
         this.setPreferredSize(new Dimension(500, 500));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
+    }
+
+    private void checkbox() {
+        JCheckBox cb1 = new JCheckBox("X");
+	    JCheckBox cb2 = new JCheckBox("Y");
+	    JCheckBox cb3 = new JCheckBox("Z");
+        cb1.setBackground(Color.BLACK);
+        cb2.setBackground(Color.BLACK);
+        cb3.setBackground(Color.BLACK);
+        cb1.setForeground(Color.WHITE);
+        cb2.setForeground(Color.WHITE);
+        cb3.setForeground(Color.WHITE);
+
+		this.add(cb1);
+		this.add(cb2);
+		this.add(cb3);
+
+        JButton b = new JButton("Reset");
+        b.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                cb1.setSelected(false);
+                cb2.setSelected(false);
+                cb3.setSelected(false);
+
+                xCheck = false;
+                yCheck = false;
+                zCheck = false;
+
+                angleX = 0;
+                angleY = 0;
+                angleZ = 0;
+            }  
+        });
+        this.add(b);
+
+        cb1.addItemListener(new ItemListener() {    
+            public void itemStateChanged(ItemEvent e) {        
+                if(xCheck)         
+                    xCheck = false;
+                else
+                    xCheck = true;
+            }
+        });
+        cb2.addItemListener(new ItemListener() {    
+            public void itemStateChanged(ItemEvent e) {                 
+                if(yCheck)         
+                    yCheck = false;
+                else
+                    yCheck = true;
+            }
+        });
+        cb3.addItemListener(new ItemListener() {    
+            public void itemStateChanged(ItemEvent e) {                 
+                if(zCheck)         
+                    zCheck = false;
+                else
+                    zCheck = true;
+            }
+        });
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         System.out.println(angleX + ", " + angleY + ", " + angleZ);
-        angleX += (Math.PI/180) * 1;
-		angleY += (Math.PI/180) * 1;
-		angleZ += (Math.PI/180) * 1;
+        checkbox();
+
+        if(xCheck)
+            angleX += (Math.PI/180) * 1;
+        if(yCheck)
+		    angleY += (Math.PI/180) * 1;
+        if(zCheck)
+		    angleZ += (Math.PI/180) * 1;
 
         double[][] rotateX = {
 				{1, 0, 0},
@@ -59,10 +131,10 @@ public class Game extends JPanel {
 
             double[][] projected2d = multiplyMatrices(projection, rotated);
 
-            projected2d = mult(200, projected2d);
+            projected2d = mult(size, projected2d);
             int x = (int) projected2d[0][0];
             int y = (int) projected2d[1][0];
-            g.drawLine(x+250, y+250, x+250, y+250);
+            g.drawLine(x+centerX, y+centerY, x+centerX, y+centerY);
             projected[i][0] = x;
             projected[i][1] = y;
         }
@@ -72,20 +144,20 @@ public class Game extends JPanel {
 
 	private void drawLines(Graphics g, double[][] pos) {
 		g.setColor(Color.WHITE);
-		g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[1][0]+250, (int)pos[1][1]+250);
-		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[3][0]+250, (int)pos[3][1]+250);
-		g.drawLine((int)pos[4][0]+250, (int)pos[4][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
-		g.drawLine((int)pos[6][0]+250, (int)pos[6][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
+		g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[1][0]+centerX, (int)pos[1][1]+centerY);
+		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[3][0]+centerX, (int)pos[3][1]+centerY);
+		g.drawLine((int)pos[4][0]+centerX, (int)pos[4][1]+centerY, (int)pos[5][0]+centerX, (int)pos[5][1]+centerY);
+		g.drawLine((int)pos[6][0]+centerX, (int)pos[6][1]+centerY, (int)pos[7][0]+centerX, (int)pos[7][1]+centerY);
 
-        g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[3][0]+250, (int)pos[3][1]+250);
-		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[1][0]+250, (int)pos[1][1]+250);
-		g.drawLine((int)pos[4][0]+250, (int)pos[4][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
-		g.drawLine((int)pos[6][0]+250, (int)pos[6][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
+        g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[3][0]+centerX, (int)pos[3][1]+centerY);
+		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[1][0]+centerX, (int)pos[1][1]+centerY);
+		g.drawLine((int)pos[4][0]+centerX, (int)pos[4][1]+centerY, (int)pos[7][0]+centerX, (int)pos[7][1]+centerY);
+		g.drawLine((int)pos[6][0]+centerX, (int)pos[6][1]+centerY, (int)pos[5][0]+centerX, (int)pos[5][1]+centerY);
 
-        g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[4][0]+250, (int)pos[4][1]+250);
-		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[6][0]+250, (int)pos[6][1]+250);
-		g.drawLine((int)pos[1][0]+250, (int)pos[1][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
-		g.drawLine((int)pos[3][0]+250, (int)pos[3][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
+        g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[4][0]+centerX, (int)pos[4][1]+centerY);
+		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[6][0]+centerX, (int)pos[6][1]+centerY);
+		g.drawLine((int)pos[1][0]+centerX, (int)pos[1][1]+centerY, (int)pos[5][0]+centerX, (int)pos[5][1]+centerY);
+		g.drawLine((int)pos[3][0]+centerX, (int)pos[3][1]+centerY, (int)pos[7][0]+centerX, (int)pos[7][1]+centerY);
 	}
 
     private void invokeSquare(Graphics g, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
