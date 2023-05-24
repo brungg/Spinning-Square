@@ -1,5 +1,3 @@
-// https://editor.p5js.org/codingtrain/sketches/r8l8XXD2A
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -47,6 +45,7 @@ public class Game extends JPanel {
 
     private void drawSquare(Graphics g, int midx, int midy, double[][][] points, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
         g.setColor(Color.WHITE);
+        double[][] projected = new double[points.length][2];
         for(int i = 0; i < points.length; i++) {
             double[][] rotated = multiplyMatrices(rotateY, points[i]);
             rotated = multiplyMatrices(rotateX, rotated);
@@ -64,27 +63,32 @@ public class Game extends JPanel {
             int x = (int) projected2d[0][0];
             int y = (int) projected2d[1][0];
             g.drawLine(x+250, y+250, x+250, y+250);
+            projected[i][0] = x;
+            projected[i][1] = y;
         }
-        
-        // int y = (50) * dy / dz;
-
-		// g.setColor(Color.WHITE);
-		// g.drawLine(dx+250, dy+250, x+250, y+250);
-
+        drawLines(g, projected);
         repaint();
     }
 
-	// private void drawLines(Graphics g, int[][] pos) {
-	// 	g.setColor(Color.WHITE);
-	// 	g.drawLine(pos[0][0]+250, pos[0][1]+250, pos[1][0]+250, pos[1][1]+250);
-	// 	g.drawLine(pos[2][0]+250, pos[2][1]+250, pos[3][0]+250, pos[3][1]+250);
-	// 	g.drawLine(pos[4][0]+250, pos[4][1]+250, pos[5][0]+250, pos[5][1]+250);
-	// 	g.drawLine(pos[6][0]+250, pos[6][1]+250, pos[7][0]+250, pos[7][1]+250);
+	private void drawLines(Graphics g, double[][] pos) {
+		g.setColor(Color.WHITE);
+		g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[1][0]+250, (int)pos[1][1]+250);
+		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[3][0]+250, (int)pos[3][1]+250);
+		g.drawLine((int)pos[4][0]+250, (int)pos[4][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
+		g.drawLine((int)pos[6][0]+250, (int)pos[6][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
 
-	// }
+        g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[3][0]+250, (int)pos[3][1]+250);
+		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[1][0]+250, (int)pos[1][1]+250);
+		g.drawLine((int)pos[4][0]+250, (int)pos[4][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
+		g.drawLine((int)pos[6][0]+250, (int)pos[6][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
+
+        g.drawLine((int)pos[0][0]+250, (int)pos[0][1]+250, (int)pos[4][0]+250, (int)pos[4][1]+250);
+		g.drawLine((int)pos[2][0]+250, (int)pos[2][1]+250, (int)pos[6][0]+250, (int)pos[6][1]+250);
+		g.drawLine((int)pos[1][0]+250, (int)pos[1][1]+250, (int)pos[5][0]+250, (int)pos[5][1]+250);
+		g.drawLine((int)pos[3][0]+250, (int)pos[3][1]+250, (int)pos[7][0]+250, (int)pos[7][1]+250);
+	}
 
     private void invokeSquare(Graphics g, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
-		//int difference = 30;
         double[][][] points = {
             { 
                 {-(length/2)},
@@ -128,19 +132,6 @@ public class Game extends JPanel {
             }
         };
         drawSquare(g, 0, 0, points, rotateX, rotateY, rotateZ);
-
-        // int[] a2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset,
-		// 	((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-        // int[] b2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset,
-		// 	((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-        // int[] c2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,
-		// 	-((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,rotateX, rotateY, rotateZ);
-        // int[] d2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,
-		// 	-((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-
-		//int[][] pointPos = {a1, a2, b1, b2, c1, c2, d1, d2};
-
-		//drawLines(g, pointPos);
     }
 
     private double[][] multiplyMatrices(double[][] firstMatrix, double[][] secondMatrix) {
