@@ -1,16 +1,16 @@
-// https://en.wikipedia.org/wiki/3D_projection
+// https://editor.p5js.org/codingtrain/sketches/r8l8XXD2A
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Spin extends JPanel {
+public class Game extends JPanel {
     double angleX = (Math.PI/180) * 0;
 	double angleY = (Math.PI/180) * 0;
 	double angleZ = (Math.PI/180) * 0;
-    int length = 200;
+    double length = 1;
     int offset = 100;
 
-    public Spin() {
+    public Game() {
         this.setPreferredSize(new Dimension(500, 500));
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -45,49 +45,131 @@ public class Spin extends JPanel {
         try { Thread.sleep(10); } catch (InterruptedException e) {}
     }
 
-    private int[] drawSquare(Graphics g, int midx, int midy, int xa, int ya, int xb, int yb, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
-        // int x1 = (int) Math.round(rotate[0][0] * (xa - midx) + rotate[0][1] * (ya - midy) + midx);
-        // int y1 = (int) Math.round(rotate[1][0] * (xa - midx) + rotate[1][1] * (ya - midy) + midy);
-        // int x2 = (int) Math.round(rotate[0][0] * (xb - midx) + rotate[0][1] * (yb - midy) + midx);
-        // int y2 = (int) Math.round(rotate[1][0] * (xb - midx) + rotate[1][1] * (yb - midy) + midy);
+    private void drawSquare(Graphics g, int midx, int midy, double[][][] points, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
+        g.setColor(Color.WHITE);
+        for(int i = 0; i < points.length; i++) {
+            double[][] rotated = multiplyMatrices(rotateY, points[i]);
+            rotated = multiplyMatrices(rotateX, rotated);
+            rotated = multiplyMatrices(rotateZ, rotated);
+            int distance = 2;
+            double z = 1/(distance - rotated[2][0]);
+            double[][] projection = {
+                {z, 0, 0},
+                {0,z, 0}
+            };
 
+            double[][] projected2d = multiplyMatrices(projection, rotated);
 
-		g.setColor(Color.WHITE);
-		g.drawLine(x1+250, y1+250, x2+250, y2+250);
+            projected2d = mult(200, projected2d);
+            int x = (int) projected2d[0][0];
+            int y = (int) projected2d[1][0];
+            g.drawLine(x+250, y+250, x+250, y+250);
+        }
+        
+        // int y = (50) * dy / dz;
+
+		// g.setColor(Color.WHITE);
+		// g.drawLine(dx+250, dy+250, x+250, y+250);
 
         repaint();
-		int[] test = {x2, y2};
-
-		return test;
     }
 
-	private void drawLines(Graphics g, int[][] pos) {
-		g.setColor(Color.WHITE);
-		g.drawLine(pos[0][0]+250, pos[0][1]+250, pos[1][0]+250, pos[1][1]+250);
-		g.drawLine(pos[2][0]+250, pos[2][1]+250, pos[3][0]+250, pos[3][1]+250);
-		g.drawLine(pos[4][0]+250, pos[4][1]+250, pos[5][0]+250, pos[5][1]+250);
-		g.drawLine(pos[6][0]+250, pos[6][1]+250, pos[7][0]+250, pos[7][1]+250);
+	// private void drawLines(Graphics g, int[][] pos) {
+	// 	g.setColor(Color.WHITE);
+	// 	g.drawLine(pos[0][0]+250, pos[0][1]+250, pos[1][0]+250, pos[1][1]+250);
+	// 	g.drawLine(pos[2][0]+250, pos[2][1]+250, pos[3][0]+250, pos[3][1]+250);
+	// 	g.drawLine(pos[4][0]+250, pos[4][1]+250, pos[5][0]+250, pos[5][1]+250);
+	// 	g.drawLine(pos[6][0]+250, pos[6][1]+250, pos[7][0]+250, pos[7][1]+250);
 
-	}
+	// }
 
     private void invokeSquare(Graphics g, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
-		int difference = 30;
-        int[] a1 = drawSquare(g, 0, 0, -(length/2), -(length/2), (length/2), -(length/2), rotateX, rotateY, rotateZ);
-        int[] b1 = drawSquare(g, 0, 0, (length/2), -(length/2), (length/2), (length/2), rotateX, rotateY, rotateZ);
-        int[] c1 = drawSquare(g, 0, 0, (length/2), (length/2), -(length/2), (length/2), rotateX, rotateY, rotateZ);
-        int[] d1 = drawSquare(g, 0, 0, -(length/2), (length/2), -(length/2), -(length/2), rotateX, rotateY, rotateZ);
+		//int difference = 30;
+        double[][][] points = {
+            { 
+                {-(length/2)},
+                {-(length/2)},
+                {-(length/2)}
+            },
+            {
+                {(length/2)}, 
+                {-(length/2)},
+                {-(length/2)}
+            },
+            {
+                {(length/2)},
+                {(length/2)},
+                {-(length/2)}
+            },
+            {
+                {-(length/2)},
+                {(length/2)},
+                {-(length/2)},
+            },
+            {
+                {-(length/2)},
+                {-(length/2)},
+                {(length/2)}
+            },
+            {
+                {(length/2)},
+                {-(length/2)},
+                {(length/2)}
+            },
+            {
+                {(length/2)},
+                {(length/2)},
+                {(length/2)}
+            },
+            {
+                {-(length/2)},
+                {(length/2)},
+                {(length/2)}
+            }
+        };
+        drawSquare(g, 0, 0, points, rotateX, rotateY, rotateZ);
 
-        int[] a2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, 
-			((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-        int[] b2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, 
-			((length/2) - difference) + offset, ((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-        int[] c2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, ((length/2) - difference) + offset, 
-			-((length/2) - difference) + offset, ((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
-        int[] d2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, ((length/2) - difference) + offset, 
-			-((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
+        // int[] a2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset,
+		// 	((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
+        // int[] b2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset,
+		// 	((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
+        // int[] c2 = drawSquare(g, offset,  offset, ((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,
+		// 	-((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,rotateX, rotateY, rotateZ);
+        // int[] d2 = drawSquare(g, offset,  offset, -((length/2) - difference) + offset, ((length/2) - difference) + offset, -((length/2) - difference) + offset,
+		// 	-((length/2) - difference) + offset, -((length/2) - difference) + offset, -((length/2) - difference) + offset, rotateX, rotateY, rotateZ);
 
-		int[][] pointPos = {a1, a2, b1, b2, c1, c2, d1, d2};
+		//int[][] pointPos = {a1, a2, b1, b2, c1, c2, d1, d2};
 
-		drawLines(g, pointPos);
+		//drawLines(g, pointPos);
+    }
+
+    private double[][] multiplyMatrices(double[][] firstMatrix, double[][] secondMatrix) {
+        double[][] result = new double[firstMatrix.length][secondMatrix[0].length];
+    
+        for (int row = 0; row < result.length; row++) {
+            for (int col = 0; col < result[row].length; col++) {
+                result[row][col] = multiplyMatricesCell(firstMatrix, secondMatrix, row, col);
+            }
+        }
+    
+        return result;
+    }
+
+    private double multiplyMatricesCell(double[][] firstMatrix, double[][] secondMatrix, int row, int col) {
+        double cell = 0;
+        for (int i = 0; i < secondMatrix.length; i++) {
+            cell += firstMatrix[row][i] * secondMatrix[i][col];
+        }
+        return cell;
+    }
+
+    private double[][] mult(double factor, double[][] matrix) {
+        double[][] result = new double[matrix.length][matrix[0].length];
+        for(int i = 0; i < result.length; i++) {
+            for(int j = 0; j < result[0].length; j++) {
+                result[i][j] = matrix[i][j] * factor;
+            }
+        }
+        return result;
     }
 }
