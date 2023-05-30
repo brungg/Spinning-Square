@@ -115,7 +115,7 @@ public class Spin extends JPanel {
         try { Thread.sleep(10); } catch (InterruptedException e) {}
     }
 
-    private void drawSquare(Graphics g, int midx, int midy, double[][][] points, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
+    private void draw(Graphics g, int midx, int midy, double[][][] points, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
         g.setColor(Color.WHITE);
         double[][] projected = new double[points.length][2];
         for(int i = 0; i < points.length; i++) {
@@ -138,12 +138,17 @@ public class Spin extends JPanel {
             projected[i][0] = x;
             projected[i][1] = y;
         }
-        drawLines(g, projected);
+        if(points.length == 5)
+            drawLinesTri(g, projected);
+        else
+            drawLines(g, projected);
+        // g.setColor(Color.WHITE);
+        // g.drawLine(250, 250, 250, 250);
         repaint();
     }
 
 	private void drawLines(Graphics g, double[][] pos) {
-		g.setColor(Color.WHITE);
+		g.setColor(Color.GREEN);
 		g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[1][0]+centerX, (int)pos[1][1]+centerY);
 		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[3][0]+centerX, (int)pos[3][1]+centerY);
 		g.drawLine((int)pos[4][0]+centerX, (int)pos[4][1]+centerY, (int)pos[5][0]+centerX, (int)pos[5][1]+centerY);
@@ -158,6 +163,19 @@ public class Spin extends JPanel {
 		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[6][0]+centerX, (int)pos[6][1]+centerY);
 		g.drawLine((int)pos[1][0]+centerX, (int)pos[1][1]+centerY, (int)pos[5][0]+centerX, (int)pos[5][1]+centerY);
 		g.drawLine((int)pos[3][0]+centerX, (int)pos[3][1]+centerY, (int)pos[7][0]+centerX, (int)pos[7][1]+centerY);
+	}
+
+    private void drawLinesTri(Graphics g, double[][] pos) {
+		g.setColor(Color.GREEN);
+		g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[1][0]+centerX, (int)pos[1][1]+centerY);
+		g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[3][0]+centerX, (int)pos[3][1]+centerY);
+        g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[3][0]+centerX, (int)pos[3][1]+centerY); 
+        g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[1][0]+centerX, (int)pos[1][1]+centerY);
+
+        g.drawLine((int)pos[0][0]+centerX, (int)pos[0][1]+centerY, (int)pos[4][0]+centerX, (int)pos[4][1]+centerY);
+        g.drawLine((int)pos[1][0]+centerX, (int)pos[1][1]+centerY, (int)pos[4][0]+centerX, (int)pos[4][1]+centerY);
+        g.drawLine((int)pos[2][0]+centerX, (int)pos[2][1]+centerY, (int)pos[4][0]+centerX, (int)pos[4][1]+centerY);
+        g.drawLine((int)pos[3][0]+centerX, (int)pos[3][1]+centerY, (int)pos[4][0]+centerX, (int)pos[4][1]+centerY);
 	}
 
     private void invokeSquare(Graphics g, double[][] rotateX, double[][] rotateY, double[][] rotateZ) {
@@ -203,7 +221,36 @@ public class Spin extends JPanel {
                 {(length/2)}
             }
         };
-        drawSquare(g, 0, 0, points, rotateX, rotateY, rotateZ);
+
+        double[][][] pointstri = {
+            { 
+                {-(length/2)},
+                {-(length/2)},
+                {(length/2)}
+            },
+            {
+                {(length/2)}, 
+                {-(length/2)},
+                {(length/2)}
+            },
+            {
+                {(length/2)},
+                {-(length/2)},
+                {-(length/2)}
+            },
+            {
+                {-(length/2)},
+                {-(length/2)},
+                {-(length/2)},
+            },
+            {
+                {0},
+                {(length/2)},
+                {0},
+            },
+        };
+        //draw(g, 0, 0, pointstri, rotateX, rotateY, rotateZ);
+        draw(g, 0, 0, points, rotateX, rotateY, rotateZ);
     }
 
     private double[][] multiplyMatrices(double[][] firstMatrix, double[][] secondMatrix) {
